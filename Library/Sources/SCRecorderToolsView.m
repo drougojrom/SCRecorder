@@ -32,7 +32,7 @@ static char *ContextAdjustingFocus = "AdjustingFocus";
 static char *ContextAdjustingExposure = "AdjustingExposure";
 static char *ContextDidChangeDevice = "DidChangeDevice";
 
-- (id)initWithFrame:(CGRect)frame {
+- (instancetype)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
     
     if (self) {
@@ -42,7 +42,7 @@ static char *ContextDidChangeDevice = "DidChangeDevice";
     return self;
 }
 
-- (id)initWithCoder:(NSCoder *)aDecoder {
+- (instancetype)initWithCoder:(NSCoder *)aDecoder {
     self = [super initWithCoder:aDecoder];
     
     if (self) {

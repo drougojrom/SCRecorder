@@ -37,7 +37,7 @@ NSString * const SCRecordSessionDocumentDirectory = @"DocumentDirectory";
             _segmentsDirectory = directory;
         }
         
-        NSArray *recordSegments = [dictionaryRepresentation objectForKey:SCRecordSessionSegmentFilenamesKey];
+        NSArray *recordSegments = dictionaryRepresentation[SCRecordSessionSegmentFilenamesKey];
         
         BOOL shouldRecomputeDuration = NO;
         
@@ -64,7 +64,7 @@ NSString * const SCRecordSessionDocumentDirectory = @"DocumentDirectory";
         }
         
         // NEW WAY
-        NSArray *segments = [dictionaryRepresentation objectForKey:SCRecordSessionSegmentsKey];
+        NSArray *segments = dictionaryRepresentation[SCRecordSessionSegmentsKey];
         for (NSDictionary *segmentDictRepresentation in segments) {
             SCRecordSessionSegment *segment = [[SCRecordSessionSegment alloc] initWithDictionaryRepresentation:segmentDictRepresentation directory:_segmentsDirectory];
             
@@ -79,7 +79,7 @@ NSString * const SCRecordSessionDocumentDirectory = @"DocumentDirectory";
         
         _currentSegmentCount = (int)_segments.count;
         
-        NSNumber *recordDuration = [dictionaryRepresentation objectForKey:SCRecordSessionDurationKey];
+        NSNumber *recordDuration = dictionaryRepresentation[SCRecordSessionDurationKey];
         if (recordDuration != nil) {
             _segmentsDuration = CMTimeMakeWithSeconds(recordDuration.doubleValue, 10000);
         } else {
@@ -95,8 +95,8 @@ NSString * const SCRecordSessionDocumentDirectory = @"DocumentDirectory";
             }
         }
         
-        _identifier = [dictionaryRepresentation objectForKey:SCRecordSessionIdentifierKey];
-        _date = [dictionaryRepresentation objectForKey:SCRecordSessionDateKey];
+        _identifier = dictionaryRepresentation[SCRecordSessionIdentifierKey];
+        _date = dictionaryRepresentation[SCRecordSessionDateKey];
     }
     
     return self;
@@ -134,7 +134,7 @@ NSString * const SCRecordSessionDocumentDirectory = @"DocumentDirectory";
     NSMutableString *randomString = [NSMutableString stringWithCapacity:length];
     
     for (int i = 0; i < length; i++) {
-        [randomString appendFormat: @"%C", [letters characterAtIndex: arc4random_uniform((u_int32_t)[letters length])]];
+        [randomString appendFormat: @"%C", [letters characterAtIndex: arc4random_uniform((u_int32_t)letters.length)]];
     }
     
     return randomString;
@@ -178,7 +178,7 @@ NSString * const SCRecordSessionDocumentDirectory = @"DocumentDirectory";
 
 - (void)removeSegmentAtIndex:(NSInteger)segmentIndex deleteFile:(BOOL)deleteFile {
     [self dispatchSyncOnSessionQueue:^{
-        SCRecordSessionSegment *segment = [_segments objectAtIndex:segmentIndex];
+        SCRecordSessionSegment *segment = _segments[segmentIndex];
         [_segments removeObjectAtIndex:segmentIndex];
         
         CMTime segmentDuration = segment.duration;
@@ -218,7 +218,7 @@ NSString * const SCRecordSessionDocumentDirectory = @"DocumentDirectory";
     [self dispatchSyncOnSessionQueue:^{
         while (_segments.count > 0) {
             if (removeFiles) {
-                SCRecordSessionSegment *segment = [_segments objectAtIndex:0];
+                SCRecordSessionSegment *segment = _segments[0];
                 [segment deleteFile];
             }
             [_segments removeObjectAtIndex:0];
@@ -377,8 +377,8 @@ NSString * const SCRecordSessionDocumentDirectory = @"DocumentDirectory";
         
         NSDictionary *pixelBufferAttributes = @{
                                                 (id)kCVPixelBufferPixelFormatTypeKey : [NSNumber numberWithInt:kCVPixelFormatType_32BGRA],
-                                                (id)kCVPixelBufferWidthKey : [NSNumber numberWithInt:dimensions.width],
-                                                (id)kCVPixelBufferHeightKey : [NSNumber numberWithInt:dimensions.height]
+                                                (id)kCVPixelBufferWidthKey : @(dimensions.width),
+                                                (id)kCVPixelBufferHeightKey : @(dimensions.height)
                                                     };
         
         _videoPixelBufferAdaptor = [AVAssetWriterInputPixelBufferAdaptor assetWriterInputPixelBufferAdaptorWithAssetWriterInput:_videoInput sourcePixelBufferAttributes:pixelBufferAttributes];
@@ -586,7 +586,7 @@ NSString * const SCRecordSessionDocumentDirectory = @"DocumentDirectory";
         if (_segments.count == 0) {
             error = [SCRecordSession createError:@"The session does not contains any record segment"];
         } else {
-            asset = [self assetRepresentingSegments];
+            asset = self.assetRepresentingSegments;
         }
     }];
 
@@ -649,7 +649,7 @@ NSString * const SCRecordSessionDocumentDirectory = @"DocumentDirectory";
 
 - (CVPixelBufferRef)createPixelBuffer {
     CVPixelBufferRef outputPixelBuffer = nil;
-    CVReturn ret = CVPixelBufferPoolCreatePixelBuffer(NULL, [_videoPixelBufferAdaptor pixelBufferPool], &outputPixelBuffer);
+    CVReturn ret = CVPixelBufferPoolCreatePixelBuffer(NULL, _videoPixelBufferAdaptor.pixelBufferPool, &outputPixelBuffer);
     
     if (ret != kCVReturnSuccess) {
         NSLog(@"UNABLE TO CREATE PIXEL BUFFER (CVReturnError: %d)", ret);
@@ -668,7 +668,7 @@ NSString * const SCRecordSessionDocumentDirectory = @"DocumentDirectory";
     CMTime lastTimeAudio = CMTimeAdd(presentationTime, duration);
 
     dispatch_async(_audioQueue, ^{
-        if ([_audioInput isReadyForMoreMediaData] && [_audioInput appendSampleBuffer:adjustedBuffer]) {
+        if (_audioInput.readyForMoreMediaData && [_audioInput appendSampleBuffer:adjustedBuffer]) {
             _lastTimeAudio = lastTimeAudio;
 
             if (!_currentSegmentHasVideo) {
@@ -719,7 +719,7 @@ NSString * const SCRecordSessionDocumentDirectory = @"DocumentDirectory";
     //        }
     //    }
 
-    if ([_videoInput isReadyForMoreMediaData]) {
+    if (_videoInput.readyForMoreMediaData) {
         if ([_videoPixelBufferAdaptor appendPixelBuffer:videoPixelBuffer withPresentationTime:bufferTimestamp]) {
             _currentSegmentDuration = CMTimeSubtract(CMTimeAdd(bufferTimestamp, duration), _sessionStartTime);
             _lastTimeVideo = actualBufferTime;
@@ -788,7 +788,7 @@ NSString * const SCRecordSessionDocumentDirectory = @"DocumentDirectory";
                     NSArray *videoTracks = [composition tracksWithMediaType:AVMediaTypeVideo];
                     
                     if (videoTracks.count > 0) {
-                        videoTrack = [videoTracks firstObject];
+                        videoTrack = videoTracks.firstObject;
                     } else {
                         videoTrack = [composition addMutableTrackWithMediaType:AVMediaTypeVideo preferredTrackID:kCMPersistentTrackID_Invalid];
                         videoTrack.preferredTransform = videoAssetTrack.preferredTransform;
@@ -805,7 +805,7 @@ NSString * const SCRecordSessionDocumentDirectory = @"DocumentDirectory";
                     NSArray *audioTracks = [composition tracksWithMediaType:AVMediaTypeAudio];
                     
                     if (audioTracks.count > 0) {
-                        audioTrack = [audioTracks firstObject];
+                        audioTrack = audioTracks.firstObject;
                     } else {
                         audioTrack = [composition addMutableTrackWithMediaType:AVMediaTypeAudio preferredTrackID:kCMPersistentTrackID_Invalid];
                     }
@@ -884,7 +884,7 @@ NSString * const SCRecordSessionDocumentDirectory = @"DocumentDirectory";
 }
 
 - (CMTime)duration {
-    return CMTimeAdd(_segmentsDuration, [self currentSegmentDuration]);
+    return CMTimeAdd(_segmentsDuration, self.currentSegmentDuration);
 }
 
 - (NSDictionary *)dictionaryRepresentation {
@@ -896,7 +896,7 @@ NSString * const SCRecordSessionDocumentDirectory = @"DocumentDirectory";
     
     return @{
              SCRecordSessionSegmentsKey: recordSegments,
-             SCRecordSessionDurationKey : [NSNumber numberWithDouble:CMTimeGetSeconds(_segmentsDuration)],
+             SCRecordSessionDurationKey : @(CMTimeGetSeconds(_segmentsDuration)),
              SCRecordSessionIdentifierKey : _identifier,
              SCRecordSessionDateKey : _date,             
              SCRecordSessionDirectoryKey : _segmentsDirectory

@@ -58,7 +58,7 @@
 }
 
 - (CMTime)duration {
-    return [self asset].duration;
+    return self.asset.duration;
 }
 
 - (UIImage *)thumbnail {
@@ -108,7 +108,7 @@
         return 0;
     }
     
-    AVAssetTrack *videoTrack = [tracks firstObject];
+    AVAssetTrack *videoTrack = tracks.firstObject;
     
     return videoTrack.nominalFrameRate;
 }

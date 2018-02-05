@@ -19,7 +19,7 @@
 
 - (void)removeRecordSessionAtIndex:(NSInteger)index;
 
-- (NSArray *)savedRecordSessions;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSArray *savedRecordSessions;
 
 + (SCRecordSessionManager *)sharedInstance;
 

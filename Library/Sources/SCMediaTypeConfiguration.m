@@ -14,7 +14,7 @@ const NSString *SCPresetHighestQuality = @"HighestQuality";
 const NSString *SCPresetMediumQuality = @"MediumQuality";
 const NSString *SCPresetLowQuality = @"LowQuality";
 
-- (id)init {
+- (instancetype)init {
     self = [super init];
     
     if (self) {

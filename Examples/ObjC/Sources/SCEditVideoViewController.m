@@ -70,7 +70,7 @@
     }
     
     if (idx < _recordSession.segments.count) {
-        SCRecordSessionSegment *segment = [_recordSession.segments objectAtIndex:idx];
+        SCRecordSessionSegment *segment = (_recordSession.segments)[idx];
         [self.videoPlayerView.player setItemByAsset:segment.asset];
         [self.videoPlayerView.player play];
     }
@@ -78,7 +78,7 @@
     _currentSelected = idx;
 
     for (NSInteger i = 0; i < _thumbnails.count; i++) {
-        UIImageView *imageView = [_thumbnails objectAtIndex:i];
+        UIImageView *imageView = _thumbnails[i];
         
         imageView.alpha = i == idx ? 1 : 0.5;
     }
@@ -97,7 +97,7 @@
 - (IBAction)deletePressed:(id)sender {
     if (_currentSelected < _recordSession.segments.count) {
         [_recordSession removeSegmentAtIndex:_currentSelected deleteFile:YES];
-        UIImageView *imageView = [_thumbnails objectAtIndex:_currentSelected];
+        UIImageView *imageView = _thumbnails[_currentSelected];
         [_thumbnails removeObjectAtIndex:_currentSelected];
         [UIView animateWithDuration:0.3 animations:^{
             imageView.transform = CGAffineTransformMakeScale(0, 0);

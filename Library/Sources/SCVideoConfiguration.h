@@ -15,12 +15,12 @@
 #define kSCVideoConfigurationDefaultScalingMode AVVideoScalingModeResizeAspectFill
 #define kSCVideoConfigurationDefaultBitrate 2000000
 
-typedef enum : NSUInteger {
+typedef NS_ENUM(NSUInteger, SCWatermarkAnchorLocation) {
     SCWatermarkAnchorLocationTopLeft,
     SCWatermarkAnchorLocationTopRight,
     SCWatermarkAnchorLocationBottomLeft,
     SCWatermarkAnchorLocationBottomRight
-} SCWatermarkAnchorLocation;
+};
 
 @protocol SCVideoOverlay <NSObject>
 

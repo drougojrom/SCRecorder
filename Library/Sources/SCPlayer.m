@@ -38,7 +38,7 @@ static char* PlaybackBufferEmpty = "PlaybackBufferEmpty";
 static char* LoadedTimeRanges = "LoadedTimeRanges";
 
 
-- (id)init {
+- (instancetype)init {
     self = [super init];
 
     if (self) {
@@ -94,7 +94,7 @@ static char* LoadedTimeRanges = "LoadedTimeRanges";
     if (notification.object == self.currentItem) {
         if (_loopEnabled) {
             [self seekToTime:kCMTimeZero];
-            if ([self isPlaying]) {
+            if (self.isPlaying) {
                 [self play];
             }
         }
@@ -278,7 +278,7 @@ static char* LoadedTimeRanges = "LoadedTimeRanges";
 
             if (self.autoRotate) {
                 CGSize videoSize = track.naturalSize;
-                CGSize viewSize =  [renderer frame].size;
+                CGSize viewSize =  renderer.frame.size;
                 CGRect outRect = CGRectApplyAffineTransform(CGRectMake(0, 0, videoSize.width, videoSize.height), transform);
 
                 BOOL viewIsWide = viewSize.width / viewSize.height > 1;
@@ -329,7 +329,7 @@ static char* LoadedTimeRanges = "LoadedTimeRanges";
 
     if (item.status != AVPlayerItemStatusFailed) {
         for (NSValue *value in item.loadedTimeRanges) {
-            CMTimeRange timeRange = [value CMTimeRangeValue];
+            CMTimeRange timeRange = value.CMTimeRangeValue;
 
             playableDuration = CMTimeAdd(playableDuration, timeRange.duration);
         }

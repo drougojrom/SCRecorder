@@ -42,7 +42,7 @@
 
 @interface NSDate (SCRecorderTools)
 
-- (NSString *__nonnull)toISO8601;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSString * _Nonnull toISO8601;
 
 + (NSDate *__nullable)fromISO8601:(NSString *__nonnull)iso8601;
 

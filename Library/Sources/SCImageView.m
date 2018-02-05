@@ -162,7 +162,7 @@
 
     if (image != nil) {
         CIContext *context = nil;
-        if (![self loadContextIfNeeded]) {
+        if (!self.loadContextIfNeeded) {
             context = [CIContext contextWithOptions:@{kCIContextUseSoftwareRenderer: @(NO)}];
         } else {
             context = _context.CIContext;
@@ -234,7 +234,7 @@
 - (void)drawRect:(CGRect)rect {
     [super drawRect:rect];
 
-    if ((_CIImage != nil || _sampleBufferHolder.sampleBuffer != nil) && [self loadContextIfNeeded]) {
+    if ((_CIImage != nil || _sampleBufferHolder.sampleBuffer != nil) && self.loadContextIfNeeded) {
         if (self.context.type == SCContextTypeCoreGraphics) {
             CIImage *image = [self renderedCIImageInRect:rect];
 
@@ -315,7 +315,7 @@
     _CIImage = CIImage;
     
     if (CIImage != nil) {
-        [self loadContextIfNeeded];
+        self.loadContextIfNeeded;
     }
     
     [self setNeedsDisplay];

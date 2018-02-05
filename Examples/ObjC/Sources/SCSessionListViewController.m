@@ -34,7 +34,7 @@
     if (_recorder.session.segments.count > 0) {
         [[SCRecordSessionManager sharedInstance] saveRecordSession:_recorder.session];
     }
-    NSDictionary *recordSessionMetadata = [[SCRecordSessionManager sharedInstance].savedRecordSessions objectAtIndex:indexPath.row];
+    NSDictionary *recordSessionMetadata = ([SCRecordSessionManager sharedInstance].savedRecordSessions)[indexPath.row];
     
     SCRecordSession *newRecordSession = [SCRecordSession recordSession:recordSessionMetadata];
     _recorder.session = newRecordSession;
@@ -44,16 +44,16 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     SCSessionTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Session"];
-    NSDictionary *recordSession = [[SCRecordSessionManager sharedInstance].savedRecordSessions objectAtIndex:indexPath.row];
+    NSDictionary *recordSession = ([SCRecordSessionManager sharedInstance].savedRecordSessions)[indexPath.row];
     
     NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-    [formatter setDateFormat:@"dd/MM/yyyy hh:mm"];
+    formatter.dateFormat = @"dd/MM/yyyy hh:mm";
     
     cell.dateLabel.text = [formatter stringFromDate:recordSession[SCRecordSessionDateKey]];
     
     NSArray *recordSegments = recordSession[SCRecordSessionSegmentsKey];
 
-    cell.segmentsCountLabel.text = [NSString stringWithFormat:@"%d segments", (int)[recordSegments count]];
+    cell.segmentsCountLabel.text = [NSString stringWithFormat:@"%d segments", (int)recordSegments.count];
     
     cell.durationLabel.text = [NSString stringWithFormat:@"%fs", [recordSession[SCRecordSessionDurationKey] doubleValue]];
     
@@ -69,7 +69,7 @@
 }
 
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
-    NSDictionary *recordSession = [[SCRecordSessionManager sharedInstance].savedRecordSessions objectAtIndex:indexPath.row];
+    NSDictionary *recordSession = ([SCRecordSessionManager sharedInstance].savedRecordSessions)[indexPath.row];
     
     NSArray *urls = recordSession[SCRecordSessionSegmentFilenamesKey];
     NSFileManager *manager = [NSFileManager defaultManager];
@@ -80,7 +80,7 @@
     
     [[SCRecordSessionManager sharedInstance] removeRecordSessionAtIndex:indexPath.row];
     
-    if ([_recorder.session.identifier isEqualToString:[recordSession objectForKey:SCRecordSessionIdentifierKey]]) {
+    if ([_recorder.session.identifier isEqualToString:recordSession[SCRecordSessionIdentifierKey]]) {
         _recorder.session = nil;
     }
     

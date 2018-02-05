@@ -16,7 +16,7 @@
 
 @implementation SCSwipeableFilterView
 
-- (id)initWithFrame:(CGRect)frame {
+- (instancetype)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
     
     if (self) {
@@ -26,7 +26,7 @@
     return self;
 }
 
-- (id)initWithCoder:(NSCoder *)aDecoder {
+- (instancetype)initWithCoder:(NSCoder *)aDecoder {
     self = [super initWithCoder:aDecoder];
     
     if (self) {
@@ -88,13 +88,13 @@
     SCFilter *newFilterGroup = nil;
     
     if (selectedIndex >= 0 && selectedIndex < filterGroupsCount) {
-        newFilterGroup = [self.filters objectAtIndex:selectedIndex];
+        newFilterGroup = (self.filters)[selectedIndex];
     } else {
         NSLog(@"Invalid contentOffset of scrollView in SCFilterSwitcherView (%f/%f with %d)", _selectFilterScrollView.contentOffset.x, _selectFilterScrollView.contentOffset.y, (int)self.filters.count);
     }
     
     if (self.selectedFilter != newFilterGroup) {
-        [self setSelectedFilter:newFilterGroup];
+        self.selectedFilter = newFilterGroup;
         
         if (shouldNotify) {
             id<SCSwipeableFilterViewDelegate> del = self.delegate;
@@ -151,7 +151,7 @@
         image = [self.preprocessingFilter imageByProcessingImage:image atTime:imageTime];
     }
 
-    CGRect extent = [image extent];
+    CGRect extent = image.extent;
 
 
     CGSize contentSize = _selectFilterScrollView.frame.size;
@@ -173,7 +173,7 @@
 
     while (index <= upIndex) {
         NSInteger currentIndex = index % filters.count;
-        SCFilter *filter = [filters objectAtIndex:currentIndex];
+        SCFilter *filter = filters[currentIndex];
         CIImage *filteredImage = [filter imageByProcessingImage:image atTime:imageTime];
         filteredImage = [filteredImage imageByCroppingToRect:CGRectMake(extent.origin.x + xImage, extent.origin.y, extent.size.width, extent.size.height)];
         outputImage = [filteredImage imageByCompositingOverImage:outputImage];

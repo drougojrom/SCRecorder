@@ -58,7 +58,7 @@
     double ratio = (time - _startTime) / _duration;
     double newValue = ([_endValue doubleValue] - [_startValue doubleValue]) * ratio + [_startValue doubleValue];
     
-    return [NSNumber numberWithDouble:newValue];
+    return @(newValue);
 }
 
 - (BOOL)hasValueAtTime:(CFTimeInterval)time {

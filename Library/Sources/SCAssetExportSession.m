@@ -179,7 +179,7 @@ static CGContextRef SCCreateContextFromPixelBuffer(CVPixelBufferRef pixelBuffer)
 
         CGContextRef ctx = SCCreateContextFromPixelBuffer(outputPixelBuffer);
 
-        void (^layoutBlock)() = ^{
+        void (^layoutBlock)(void) = ^{
             overlay.frame = CGRectMake(0, 0, videoSize.width, videoSize.height);
 
             if ([overlay respondsToSelector:@selector(updateWithVideoTime:)]) {
@@ -385,7 +385,7 @@ static CGContextRef SCCreateContextFromPixelBuffer(CVPixelBufferRef pixelBuffer)
     }
 }
 
-- (void)callCompletionHandler:(void (^)())completionHandler {
+- (void)callCompletionHandler:(void (^)(void))completionHandler {
     if (!_cancelled) {
         [self _setProgress:1];
     }
@@ -467,20 +467,20 @@ static CGContextRef SCCreateContextFromPixelBuffer(CVPixelBufferRef pixelBuffer)
     _cancelled = YES;
 
     dispatch_sync(_videoQueue, ^{
-        if (_needsLeaveVideo) {
-            _needsLeaveVideo = NO;
-            dispatch_group_leave(_dispatchGroup);
+        if (self->_needsLeaveVideo) {
+            self->_needsLeaveVideo = NO;
+            dispatch_group_leave(self->_dispatchGroup);
         }
 
-        dispatch_sync(_audioQueue, ^{
-            if (_needsLeaveAudio) {
-                _needsLeaveAudio = NO;
-                dispatch_group_leave(_dispatchGroup);
+        dispatch_sync(self->_audioQueue, ^{
+            if (self->_needsLeaveAudio) {
+                self->_needsLeaveAudio = NO;
+                dispatch_group_leave(self->_dispatchGroup);
             }
         });
 
-        [_reader cancelReading];
-        [_writer cancelWriting];
+        [self->_reader cancelReading];
+        [self->_writer cancelWriting];
     });
 }
 
@@ -557,7 +557,7 @@ static CGContextRef SCCreateContextFromPixelBuffer(CVPixelBufferRef pixelBuffer)
         AVAudioMix *audioMix = self.audioConfiguration.audioMix;
 
         AVAssetReaderOutput *reader = nil;
-        NSDictionary *settings = @{ AVFormatIDKey : [NSNumber numberWithUnsignedInt:kAudioFormatType] };
+        NSDictionary *settings = @{ AVFormatIDKey : @(kAudioFormatType) };
         if (audioMix == nil) {
             reader = [AVAssetReaderTrackOutput assetReaderTrackOutputWithTrack:audioTracks.firstObject outputSettings:settings];
         } else {
@@ -581,7 +581,7 @@ static CGContextRef SCCreateContextFromPixelBuffer(CVPixelBufferRef pixelBuffer)
 - (void)_setupVideoUsingTracks:(NSArray *)videoTracks {
     _inputBufferSize = CGSizeZero;
     if (videoTracks.count > 0 && self.videoConfiguration.enabled && !self.videoConfiguration.shouldIgnore) {
-        AVAssetTrack *videoTrack = [videoTracks objectAtIndex:0];
+        AVAssetTrack *videoTrack = videoTracks[0];
 
         // Input
         NSDictionary *videoSettings = [_videoConfiguration createAssetWriterOptionsWithVideoSize:videoTrack.naturalSize];
@@ -621,13 +621,13 @@ static CGContextRef SCCreateContextFromPixelBuffer(CVPixelBufferRef pixelBuffer)
         NSDictionary *settings = nil;
         if (_filter != nil || self.videoConfiguration.overlay != nil) {
             settings = @{
-                         (id)kCVPixelBufferPixelFormatTypeKey     : [NSNumber numberWithUnsignedInt:kCVPixelFormatType_32BGRA],
-                         (id)kCVPixelBufferIOSurfacePropertiesKey : [NSDictionary dictionary]
+                         (id)kCVPixelBufferPixelFormatTypeKey     : @(kCVPixelFormatType_32BGRA),
+                         (id)kCVPixelBufferIOSurfacePropertiesKey : @{}
                          };
         } else {
             settings = @{
-                         (id)kCVPixelBufferPixelFormatTypeKey     : [NSNumber numberWithUnsignedInt:kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange],
-                         (id)kCVPixelBufferIOSurfacePropertiesKey : [NSDictionary dictionary]
+                         (id)kCVPixelBufferPixelFormatTypeKey     : @(kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange),
+                         (id)kCVPixelBufferIOSurfacePropertiesKey : @{}
                          };
         }
 
@@ -655,7 +655,7 @@ static CGContextRef SCCreateContextFromPixelBuffer(CVPixelBufferRef pixelBuffer)
     }
 }
 
-- (void)exportAsynchronouslyWithCompletionHandler:(void (^)())completionHandler {
+- (void)exportAsynchronouslyWithCompletionHandler:(void (^)(void))completionHandler {
     _cancelled = NO;
     _nextAllowedVideoFrame = kCMTimeZero;
     NSError *error = nil;
@@ -696,13 +696,13 @@ static CGContextRef SCCreateContextFromPixelBuffer(CVPixelBufferRef pixelBuffer)
     [self beginReadWriteOnVideo];
     
     dispatch_group_notify(_dispatchGroup, dispatch_get_main_queue(), ^{
-        if (_error == nil) {
-            _error = _writer.error;
+        if (self->_error == nil) {
+            self->_error = self->_writer.error;
         }
         
-        if (_error == nil && _writer.status != AVAssetWriterStatusCancelled) {
-            [_writer finishWritingWithCompletionHandler:^{
-                _error = _writer.error;
+        if (self->_error == nil && self->_writer.status != AVAssetWriterStatusCancelled) {
+            [self->_writer finishWritingWithCompletionHandler:^{
+                self->_error = self->_writer.error;
                 [self callCompletionHandler:completionHandler];
             }];
         } else {

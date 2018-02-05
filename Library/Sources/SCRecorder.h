@@ -298,7 +298,7 @@
  Calling this method will block until it's done.
  If it returns NO, an error will be set in the "error" property.
  */
-- (BOOL)startRunning;
+@property (NS_NONATOMIC_IOSONLY, readonly) BOOL startRunning;
 
 /**
  End the flow of inputs in the AVCaptureSession
@@ -414,7 +414,7 @@
 /**
  Get an image representing the last output video buffer.
  */
-- (UIImage *__nullable)snapshotOfLastVideoBuffer;
+@property (NS_NONATOMIC_IOSONLY, readonly, strong) UIImage * _Nullable snapshotOfLastVideoBuffer;
 
 /**
  Returns a shared recorder if you want to use the same instance throughout your app.

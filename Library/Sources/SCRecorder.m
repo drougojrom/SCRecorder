@@ -50,7 +50,7 @@ static char* SCRecorderVideoEnabledContext = "VideoEnabledContext";
 static char* SCRecorderAudioEnabledContext = "AudioEnabledContext";
 static char* SCRecorderPhotoOptionsContext = "PhotoOptionsContext";
 
-- (id)init {
+- (instancetype)init {
     self = [super init];
     
     if (self) {
@@ -80,9 +80,9 @@ static char* SCRecorderPhotoOptionsContext = "PhotoOptionsContext";
         _lastAudioBuffer = [SCSampleBufferHolder new];
         _maxRecordDuration = kCMTimeInvalid;
         _resetZoomOnChangeDevice = YES;
-		_mirrorOnFrontCamera = NO;
-		_automaticallyConfiguresApplicationAudioSession = YES;
-		
+        _mirrorOnFrontCamera = NO;
+        _automaticallyConfiguresApplicationAudioSession = YES;
+        
         self.device = AVCaptureDevicePositionBack;
         _videoConfiguration = [SCVideoConfiguration new];
         _audioConfiguration = [SCAudioConfiguration new];
@@ -134,7 +134,7 @@ static char* SCRecorderPhotoOptionsContext = "PhotoOptionsContext";
 }
 
 - (void)sessionRuntimeError:(id)sender {
-    [self startRunning];
+    self.startRunning;
 }
 
 - (void)updateVideoOrientation {
@@ -145,15 +145,15 @@ static char* SCRecorderPhotoOptionsContext = "PhotoOptionsContext";
     AVCaptureVideoOrientation videoOrientation = [self actualVideoOrientation];
     AVCaptureConnection *videoConnection = [_videoOutput connectionWithMediaType:AVMediaTypeVideo];
     
-    if ([videoConnection isVideoOrientationSupported]) {
+    if (videoConnection.supportsVideoOrientation) {
         videoConnection.videoOrientation = videoOrientation;
     }
-    if ([_previewLayer.connection isVideoOrientationSupported]) {
+    if ((_previewLayer.connection).supportsVideoOrientation) {
         _previewLayer.connection.videoOrientation = videoOrientation;
     }
     
     AVCaptureConnection *photoConnection = [_photoOutput connectionWithMediaType:AVMediaTypeVideo];
-    if ([photoConnection isVideoOrientationSupported]) {
+    if (photoConnection.supportsVideoOrientation) {
         photoConnection.videoOrientation = videoOrientation;
     }
     
@@ -273,7 +273,7 @@ static char* SCRecorderPhotoOptionsContext = "PhotoOptionsContext";
         if (self.photoConfiguration.enabled) {
             if (_photoOutput == nil) {
                 _photoOutput = [[AVCaptureStillImageOutput alloc] init];
-                _photoOutput.outputSettings = [self.photoConfiguration createOutputSettings];
+                _photoOutput.outputSettings = (self.photoConfiguration).createOutputSettings;
             }
             
             if (![session.outputs containsObject:_photoOutput]) {
@@ -300,7 +300,7 @@ static char* SCRecorderPhotoOptionsContext = "PhotoOptionsContext";
     }
     
     AVCaptureSession *session = [[AVCaptureSession alloc] init];
-	session.automaticallyConfiguresApplicationAudioSession = self.automaticallyConfiguresApplicationAudioSession;
+    session.automaticallyConfiguresApplicationAudioSession = self.automaticallyConfiguresApplicationAudioSession;
     _beginSessionConfigurationCount = 0;
     _captureSession = session;
     
@@ -887,7 +887,7 @@ static char* SCRecorderPhotoOptionsContext = "PhotoOptionsContext";
     id<SCRecorderDelegate> delegate = self.delegate;
     
     if (context == SCRecorderFocusContext) {
-        BOOL isFocusing = [[change objectForKey:NSKeyValueChangeNewKey] boolValue];
+        BOOL isFocusing = [change[NSKeyValueChangeNewKey] boolValue];
         if (isFocusing) {
             [self setAdjustingFocus:YES];
             
@@ -898,7 +898,7 @@ static char* SCRecorderPhotoOptionsContext = "PhotoOptionsContext";
             [self _focusDidComplete];
         }
     } else if (context == SCRecorderExposureContext) {
-        BOOL isAdjustingExposure = [[change objectForKey:NSKeyValueChangeNewKey] boolValue];
+        BOOL isAdjustingExposure = [change[NSKeyValueChangeNewKey] boolValue];
         
         [self setAdjustingExposure:isAdjustingExposure];
 
@@ -928,7 +928,7 @@ static char* SCRecorderPhotoOptionsContext = "PhotoOptionsContext";
             });
         }
     } else if (context == SCRecorderPhotoOptionsContext) {
-        _photoOutput.outputSettings = [_photoConfiguration createOutputSettings];
+        _photoOutput.outputSettings = _photoConfiguration.createOutputSettings;
     }
 }
 
@@ -944,7 +944,7 @@ static char* SCRecorderPhotoOptionsContext = "PhotoOptionsContext";
 
 - (void)_configureVideoStabilization {
     AVCaptureConnection *videoConnection = [self videoConnection];
-    if ([videoConnection isVideoStabilizationSupported]) {
+    if (videoConnection.supportsVideoStabilization) {
         if ([videoConnection respondsToSelector:@selector(setPreferredVideoStabilizationMode:)]) {
             videoConnection.preferredVideoStabilizationMode = _videoStabilizationMode;
         }
@@ -953,7 +953,7 @@ static char* SCRecorderPhotoOptionsContext = "PhotoOptionsContext";
 
 - (void)_configureFrontCameraMirroring:(BOOL)videoMirrored {
     AVCaptureConnection *videoConnection = [self videoConnection];
-    if ([videoConnection isVideoMirroringSupported]) {
+    if (videoConnection.supportsVideoMirroring) {
         if ([videoConnection respondsToSelector:@selector(setVideoMirrored:)]) {
             videoConnection.videoMirrored = videoMirrored;
         }
@@ -1087,7 +1087,7 @@ static char* SCRecorderPhotoOptionsContext = "PhotoOptionsContext";
 }
 
 - (void)sessionInterrupted:(NSNotification *)notification {
-    NSNumber *interruption = [notification.userInfo objectForKey:AVAudioSessionInterruptionOptionKey];
+    NSNumber *interruption = (notification.userInfo)[AVAudioSessionInterruptionOptionKey];
     
     if (interruption != nil) {
         AVAudioSessionInterruptionOptions options = interruption.unsignedIntValue;
@@ -1098,18 +1098,18 @@ static char* SCRecorderPhotoOptionsContext = "PhotoOptionsContext";
 }
 
 - (void)lockFocus {
-    AVCaptureDevice *device = [self.currentVideoDeviceInput device];
+    AVCaptureDevice *device = (self.currentVideoDeviceInput).device;
     if ([device isFocusModeSupported:AVCaptureFocusModeLocked]) {
         NSError *error;
         if ([device lockForConfiguration:&error]) {
-            [device setFocusMode:AVCaptureFocusModeLocked];
+            device.focusMode = AVCaptureFocusModeLocked;
             [device unlockForConfiguration];
         }
     }
 }
 
 - (void)_applyPointOfInterest:(CGPoint)point continuousMode:(BOOL)continuousMode {
-    AVCaptureDevice *device = [self.currentVideoDeviceInput device];
+    AVCaptureDevice *device = (self.currentVideoDeviceInput).device;
     AVCaptureFocusMode focusMode = continuousMode ? AVCaptureFocusModeContinuousAutoFocus : AVCaptureFocusModeAutoFocus;
     AVCaptureExposureMode exposureMode = continuousMode ? AVCaptureExposureModeContinuousAutoExposure : AVCaptureExposureModeAutoExpose;
     AVCaptureWhiteBalanceMode whiteBalanceMode = continuousMode ? AVCaptureWhiteBalanceModeContinuousAutoWhiteBalance : AVCaptureWhiteBalanceModeAutoWhiteBalance;
@@ -1184,15 +1184,15 @@ static char* SCRecorderPhotoOptionsContext = "PhotoOptionsContext";
 }
 
 - (CGPoint)exposurePointOfInterest {
-    return [self.currentVideoDeviceInput device].exposurePointOfInterest;
+    return (self.currentVideoDeviceInput).device.exposurePointOfInterest;
 }
 
 - (BOOL)exposureSupported {
-    return [self.currentVideoDeviceInput device].isExposurePointOfInterestSupported;
+    return (self.currentVideoDeviceInput).device.isExposurePointOfInterestSupported;
 }
 
 - (CGPoint)focusPointOfInterest {
-    return [self.currentVideoDeviceInput device].focusPointOfInterest;
+    return (self.currentVideoDeviceInput).device.focusPointOfInterest;
 }
 
 - (BOOL)focusSupported {
@@ -1237,7 +1237,7 @@ static char* SCRecorderPhotoOptionsContext = "PhotoOptionsContext";
     AVCaptureVideoOrientation videoOrientation = _videoOrientation;
     
     if (_autoSetVideoOrientation) {
-        UIDeviceOrientation deviceOrientation = [[UIDevice currentDevice] orientation];
+        UIDeviceOrientation deviceOrientation = [UIDevice currentDevice].orientation;
         
         switch (deviceOrientation) {
             case UIDeviceOrientationLandscapeLeft:
@@ -1310,17 +1310,17 @@ static char* SCRecorderPhotoOptionsContext = "PhotoOptionsContext";
         if ([currentDevice lockForConfiguration:&error]) {
             if (flashMode == SCFlashModeLight) {
                 if ([currentDevice isTorchModeSupported:AVCaptureTorchModeOn]) {
-                    [currentDevice setTorchMode:AVCaptureTorchModeOn];
+                    currentDevice.torchMode = AVCaptureTorchModeOn;
                 }
                 if ([currentDevice isFlashModeSupported:AVCaptureFlashModeOff]) {
-                    [currentDevice setFlashMode:AVCaptureFlashModeOff];
+                    currentDevice.flashMode = AVCaptureFlashModeOff;
                 }
             } else {
                 if ([currentDevice isTorchModeSupported:AVCaptureTorchModeOff]) {
-                    [currentDevice setTorchMode:AVCaptureTorchModeOff];
+                    currentDevice.torchMode = AVCaptureTorchModeOff;
                 }
                 if ([currentDevice isFlashModeSupported:(AVCaptureFlashMode)flashMode]) {
-                    [currentDevice setFlashMode:(AVCaptureFlashMode)flashMode];
+                    currentDevice.flashMode = (AVCaptureFlashMode)flashMode;
                 }
             }
             

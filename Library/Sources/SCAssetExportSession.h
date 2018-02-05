@@ -93,7 +93,7 @@
 
 @property (weak, nonatomic) __nullable id<SCAssetExportSessionDelegate> delegate;
 
-- (nonnull instancetype)init;
+- (nonnull instancetype)init NS_DESIGNATED_INITIALIZER;
 
 // Init with the inputAsset
 - (nonnull instancetype)initWithAsset:(AVAsset *__nonnull)inputAsset;

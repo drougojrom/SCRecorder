@@ -10,7 +10,7 @@
 
 @implementation SCAudioConfiguration
 
-- (id)init {
+- (instancetype)init {
     self = [super init];
     
     if (self) {
@@ -64,9 +64,9 @@
     }
     
     return @{
-             AVFormatIDKey : [NSNumber numberWithInt: self.format],
-             AVEncoderBitRateKey : [NSNumber numberWithUnsignedLong: bitrate],
-             AVNumberOfChannelsKey : [NSNumber numberWithInt: channels],
+             AVFormatIDKey : @(self.format),
+             AVEncoderBitRateKey : @(bitrate),
+             AVNumberOfChannelsKey : @(channels),
              AVSampleRateKey : [NSNumber numberWithInt: sampleRate]
              };
 }

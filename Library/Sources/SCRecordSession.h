@@ -128,7 +128,7 @@ extern NSString *__nonnull const SCRecordSessionDocumentDirectory;
  within this block will ensure that you are the only one who has
  access to any modification on this SCRecordSession.
  */
-- (void)dispatchSyncOnSessionQueue:(void(^__nonnull)())block;
+- (void)dispatchSyncOnSessionQueue:(void(^__nonnull)(void))block;
 
 //////////////////////
 /////// SEGMENTS
@@ -175,7 +175,7 @@ extern NSString *__nonnull const SCRecordSessionDocumentDirectory;
  If you don't want a segment to be automatically added when calling this method,
  you should remove the SCRecordSession from the SCRecorder
  */
-- (void)cancelSession:(void(^ __nullable)())completionHandler;
+- (void)cancelSession:(void(^ __nullable)(void))completionHandler;
 
 /**
  Merge the recorded record segments using the given AVAssetExportSessionPreset.
@@ -188,14 +188,14 @@ extern NSString *__nonnull const SCRecordSessionDocumentDirectory;
  Returns an asset representing all the record segments
  from this record session. This can be called anytime.
  */
-- (AVAsset *__nonnull)assetRepresentingSegments;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) AVAsset * _Nonnull assetRepresentingSegments;
 
 /**
  Returns a player item representing all the record segments
  from this record session and containing an audio mix that smooth
  the transition between the segments.
  */
-- (AVPlayerItem *__nonnull)playerItemRepresentingSegments;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) AVPlayerItem * _Nonnull playerItemRepresentingSegments;
 
 /**
  Append all the record segments to a given AVMutableComposition.

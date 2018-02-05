@@ -20,7 +20,7 @@
 
 @implementation SCFilter
 
-- (id)initWithCoder:(NSCoder *)aDecoder {
+- (instancetype)initWithCoder:(NSCoder *)aDecoder {
     self = [self init];
     
     if (self) {
@@ -34,7 +34,7 @@
                 
                 if (vectorData != nil) {
                     for (int i = 1; i < vectorData.count; i++) {
-                        NSNumber *value = [vectorData objectAtIndex:i];
+                        NSNumber *value = vectorData[i];
                         vectorValue[i - 1] = (CGFloat)value.doubleValue;
                     }
                     NSString *key = vectorData.firstObject;
@@ -49,7 +49,7 @@
             NSDictionary *unwrappedValues = [aDecoder decodeObjectForKey:@"UnwrappedValues"];
             
             for (NSString *key in unwrappedValues) {
-                [self setParameterValue:[unwrappedValues objectForKey:key] forKey:key];
+                [self setParameterValue:unwrappedValues[key] forKey:key];
             }
         }
         
@@ -60,7 +60,7 @@
         if ([aDecoder containsValueForKey:@"Name"]) {
             _name = [aDecoder decodeObjectForKey:@"Name"];
         } else {
-            _name = [_CIFilter.attributes objectForKey:kCIAttributeFilterName];
+            _name = (_CIFilter.attributes)[kCIAttributeFilterName];
         }
         
         if ([aDecoder containsValueForKey:@"Animations"]) {
@@ -89,7 +89,7 @@
     self = [self init];
     
     if (self) {
-        _name = [filter.attributes objectForKey:kCIAttributeFilterDisplayName];
+        _name = (filter.attributes)[kCIAttributeFilterDisplayName];
         _CIFilter = filter;
     }
     
@@ -111,7 +111,7 @@
 }
 
 - (id)_unwrappedValue:(id)value forKey:(NSString *)key {    
-    id unwrappedValue = [_unwrappedValues objectForKey:key];
+    id unwrappedValue = _unwrappedValues[key];
     
     return unwrappedValue == nil ? value : unwrappedValue;
 }
@@ -152,7 +152,7 @@
                 
                 NSInteger dimension = [[_CIFilter valueForKey:@"inputCubeDimension"] integerValue];
                 
-                [_unwrappedValues setObject:data forKey:key];
+                _unwrappedValues[key] = data;
                 
                 value = [SCFilter colorCubeDataWithCGImage:image dimension:dimension];
                 CGImageRelease(image);
@@ -168,7 +168,7 @@
 
 - (void)_didChangeParameter:(NSString *)key {
     if ([key isEqualToString:@"inputCubeDimension"]) {
-        NSData *inputCubeData = [_unwrappedValues objectForKey:@"inputCubeData"];
+        NSData *inputCubeData = _unwrappedValues[@"inputCubeData"];
         if (inputCubeData != nil) {
             [self setParameterValue:inputCubeData forKey:@"inputCubeData"];
         }
@@ -219,7 +219,7 @@
 
             for (int i = 0; i < vector.count; i++) {
                 CGFloat value = [vector valueAtIndex:i];
-                [vectorData addObject:[NSNumber numberWithDouble:(double)value]];
+                [vectorData addObject:@((double)value)];
             }
             [vectors addObject:vectorData];
         }

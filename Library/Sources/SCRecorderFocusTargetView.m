@@ -22,7 +22,7 @@
 
 @implementation SCRecorderFocusTargetView
 
-- (id)initWithFrame:(CGRect)frame
+- (instancetype)initWithFrame:(CGRect)frame
 {
     self = [super initWithFrame:frame];
     if (self) {
@@ -69,8 +69,8 @@
     CABasicAnimation *insideCircleAnimation = [CABasicAnimation animationWithKeyPath:@"opacity"];
     insideCircleAnimation.beginTime = CACurrentMediaTime() + 0.1;
     insideCircleAnimation.duration = 0.5;
-    insideCircleAnimation.fromValue = [NSNumber numberWithFloat:1.0f];
-    insideCircleAnimation.toValue = [NSNumber numberWithFloat:0.5f];
+    insideCircleAnimation.fromValue = @1.0f;
+    insideCircleAnimation.toValue = @0.5f;
     insideCircleAnimation.repeatCount = HUGE_VAL;
     insideCircleAnimation.autoreverses = YES;
     insideCircleAnimation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionLinear];
@@ -79,8 +79,8 @@
     // outsideCircle 匀速的缩放
     CABasicAnimation *outsideCircleAnimation = [CABasicAnimation animationWithKeyPath:@"transform.scale"];
     outsideCircleAnimation.beginTime = CACurrentMediaTime() + 0.1;
-    outsideCircleAnimation.fromValue = [NSNumber numberWithFloat:1.0f];
-    outsideCircleAnimation.toValue = [NSNumber numberWithFloat:0.85f];
+    outsideCircleAnimation.fromValue = @1.0f;
+    outsideCircleAnimation.toValue = @0.85f;
     outsideCircleAnimation.repeatCount = HUGE_VAL;
     outsideCircleAnimation.autoreverses = YES;
     outsideCircleAnimation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionLinear];
@@ -98,12 +98,12 @@
     [self.outsideCircle.layer removeAnimationForKey:kOutsideCircleAnimationKey];
     
     CABasicAnimation *scaleAniamtion = [CABasicAnimation animationWithKeyPath:@"transform.scale"];
-    scaleAniamtion.fromValue = [NSNumber numberWithFloat:1.0f];
-    scaleAniamtion.toValue = [NSNumber numberWithFloat:.0f];
+    scaleAniamtion.fromValue = @1.0f;
+    scaleAniamtion.toValue = @.0f;
     
     CABasicAnimation *fadeAnim=[CABasicAnimation animationWithKeyPath:@"opacity"];
-    fadeAnim.fromValue=[NSNumber numberWithDouble:1.0];
-    fadeAnim.toValue=[NSNumber numberWithDouble:0.0];
+    fadeAnim.fromValue=@1.0;
+    fadeAnim.toValue=@0.0;
     
     CAAnimationGroup *group = [CAAnimationGroup animation];
     group.beginTime = CACurrentMediaTime() + 0.3;
@@ -112,7 +112,7 @@
     group.duration = 0.3;
     group.repeatCount = 1;
     group.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
-    group.animations = [NSArray arrayWithObjects:scaleAniamtion, fadeAnim, nil];
+    group.animations = @[scaleAniamtion, fadeAnim];
     
     [self.insideCircle.layer addAnimation:group forKey:kRemoveCircleAnimationKey];
     [self.outsideCircle.layer addAnimation:group forKey:kRemoveCircleAnimationKey];

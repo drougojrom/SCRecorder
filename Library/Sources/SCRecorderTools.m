@@ -131,7 +131,7 @@
     AVMutableMetadataItem *creationDate = [AVMutableMetadataItem new];
     creationDate.keySpace = AVMetadataKeySpaceCommon;
     creationDate.key = AVMetadataCommonKeyCreationDate;
-    creationDate.value = [[NSDate date] toISO8601];
+    creationDate.value = [NSDate date].toISO8601;
     
     AVMutableMetadataItem *software = [AVMutableMetadataItem new];
     software.keySpace = AVMetadataKeySpaceCommon;
@@ -151,8 +151,8 @@
     dispatch_once(&onceToken, ^{
         dateFormatter = [[NSDateFormatter alloc] init];
         NSLocale *enUSPOSIXLocale = [[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"];
-        [dateFormatter setLocale:enUSPOSIXLocale];
-        [dateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ssZZZZZ"];
+        dateFormatter.locale = enUSPOSIXLocale;
+        dateFormatter.dateFormat = @"yyyy-MM-dd'T'HH:mm:ssZZZZZ";
     });
 
     return dateFormatter;

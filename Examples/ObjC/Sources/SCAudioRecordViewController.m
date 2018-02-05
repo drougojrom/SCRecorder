@@ -44,7 +44,7 @@
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     
-    [_recorder startRunning];
+    _recorder.startRunning;
 }
 
 - (void)viewDidDisappear:(BOOL)animated {

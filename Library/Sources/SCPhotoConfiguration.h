@@ -26,6 +26,6 @@
 /**
  Returns the output settings for the 
  */
-- (NSDictionary *__nonnull)createOutputSettings;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSDictionary * _Nonnull createOutputSettings;
 
 @end

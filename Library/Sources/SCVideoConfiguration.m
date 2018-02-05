@@ -10,7 +10,7 @@
 
 @implementation SCVideoConfiguration
 
-- (id)init {
+- (instancetype)init {
     self = [super init];
     
     if (self) {
@@ -72,19 +72,19 @@ static CGSize MakeVideoSize(CGSize videoSize, float requestedWidth) {
         }
     }
     
-    NSMutableDictionary *compressionSettings = [NSMutableDictionary dictionaryWithObject:[NSNumber numberWithUnsignedLong:bitrate] forKey:AVVideoAverageBitRateKey];
+    NSMutableDictionary *compressionSettings = [NSMutableDictionary dictionaryWithObject:@(bitrate) forKey:AVVideoAverageBitRateKey];
     
     if (self.shouldKeepOnlyKeyFrames) {
-        [compressionSettings setObject:@1 forKey:AVVideoMaxKeyFrameIntervalKey];
+        compressionSettings[AVVideoMaxKeyFrameIntervalKey] = @1;
     }
     
     if (self.profileLevel) {
-        [compressionSettings setObject:self.profileLevel forKey:AVVideoProfileLevelKey];
+        compressionSettings[AVVideoProfileLevelKey] = self.profileLevel;
     }
 //    [compressionSettings setObject:@30 forKey:AVVideoAverageNonDroppableFrameRateKey];
-    [compressionSettings setObject:@NO forKey:AVVideoAllowFrameReorderingKey];
+    compressionSettings[AVVideoAllowFrameReorderingKey] = @NO;
 //    [compressionSettings setObject:AVVideoH264EntropyModeCABAC forKey:AVVideoH264EntropyModeKey];
-    [compressionSettings setObject:@30 forKey:AVVideoExpectedSourceFrameRateKey];
+    compressionSettings[AVVideoExpectedSourceFrameRateKey] = @30;
     
     return @{
              AVVideoCodecKey : self.codec,

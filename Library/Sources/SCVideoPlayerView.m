@@ -25,17 +25,17 @@
 
 @implementation SCVideoPlayerView
 
-- (id)init {
-	self = [super init];
-	
-	if (self) {
+- (instancetype)init {
+    self = [super init];
+    
+    if (self) {
         [self _commonInit:nil];
-	}
-	
-	return self;
+    }
+    
+    return self;
 }
 
-- (id)initWithPlayer:(SCPlayer *)thePlayer {
+- (instancetype)initWithPlayer:(SCPlayer *)thePlayer {
     self = [super init];
     
     if (self) {
@@ -52,14 +52,14 @@
     }
 }
 
-- (id)initWithCoder:(NSCoder *)aDecoder {
-	self = [super initWithCoder:aDecoder];
-	
-	if (self) {
+- (instancetype)initWithCoder:(NSCoder *)aDecoder {
+    self = [super initWithCoder:aDecoder];
+    
+    if (self) {
         [self _commonInit:nil];
-	}
-	
-	return self;
+    }
+    
+    return self;
 }
 
 - (void)_commonInit:(SCPlayer *)player {
@@ -74,7 +74,7 @@
     self.player = player;
     _holdPlayer = holdPlayer;
     
-	self.clipsToBounds = YES;
+    self.clipsToBounds = YES;
     [self setNeedsLayout];
 }
 
@@ -97,8 +97,8 @@
 }
 
 - (void)layoutSubviews {
-	[super layoutSubviews];
-	
+    [super layoutSubviews];
+    
     _playerLayer.frame = self.bounds;
 }
 

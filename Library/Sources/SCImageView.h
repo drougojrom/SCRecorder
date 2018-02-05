@@ -72,7 +72,7 @@
  you can call this method.
  Returns whether the context has been successfully loaded, returns NO otherwise.
  */
-- (BOOL)loadContextIfNeeded;
+@property (NS_NONATOMIC_IOSONLY, readonly) BOOL loadContextIfNeeded;
 
 /**
  Returns the rendered CIImage in the given rect.
@@ -91,13 +91,13 @@
  Returns the rendered CIImage in its natural size.
  Subclass should not override this method.
  */
-- (CIImage *__nullable)renderedCIImage;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) CIImage * _Nullable renderedCIImage;
 
 /**
  Returns the rendered UIImage in its natural size.
  Subclass should not override this method.
  */
-- (UIImage *__nullable)renderedUIImage;
+@property (NS_NONATOMIC_IOSONLY, readonly, strong) UIImage * _Nullable renderedUIImage;
 
 
 @end

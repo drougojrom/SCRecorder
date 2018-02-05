@@ -45,7 +45,7 @@
 /**
  Init the SCVideoPlayerView with a provided SCPlayer.
  */
-- (nonnull instancetype)initWithPlayer:(SCPlayer *__nonnull)player;
+- (nonnull instancetype)initWithPlayer:(SCPlayer *__nonnull)player NS_DESIGNATED_INITIALIZER;
 
 /**
  Set whether every new instances of SCVideoPlayerView should automatically create

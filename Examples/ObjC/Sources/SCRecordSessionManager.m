@@ -12,7 +12,7 @@
 @implementation SCRecordSessionManager
 
 - (void)modifyMetadatas:(void(^)(NSMutableArray *metadatas))block {
-    NSMutableArray *metadatas = [[self savedRecordSessions] mutableCopy];
+    NSMutableArray *metadatas = [self.savedRecordSessions mutableCopy];
     
     if (metadatas == nil) {
         metadatas = [NSMutableArray new];
@@ -29,7 +29,7 @@
         NSInteger insertIndex = -1;
         
         for (int i = 0; i < metadatas.count; i++) {
-            NSDictionary *otherRecordSessionMetadata = [metadatas objectAtIndex:i];
+            NSDictionary *otherRecordSessionMetadata = metadatas[i];
             if ([otherRecordSessionMetadata[SCRecordSessionIdentifierKey] isEqualToString:recordSession.identifier]) {
                 insertIndex = i;
                 break;
@@ -41,7 +41,7 @@
         if (insertIndex == -1) {
             [metadatas addObject:metadata];
         } else {
-            [metadatas replaceObjectAtIndex:insertIndex withObject:metadata];
+            metadatas[insertIndex] = metadata;
         }
     }];
 }
@@ -50,7 +50,7 @@
     [self modifyMetadatas:^(NSMutableArray *metadatas) {
         
         for (int i = 0; i < metadatas.count; i++) {
-            NSDictionary *otherRecordSessionMetadata = [metadatas objectAtIndex:i];
+            NSDictionary *otherRecordSessionMetadata = metadatas[i];
             if ([otherRecordSessionMetadata[SCRecordSessionIdentifierKey] isEqualToString:recordSession.identifier]) {
                 i--;
                 [metadatas removeObjectAtIndex:i];
@@ -61,7 +61,7 @@
 }
 
 - (BOOL)isSaved:(SCRecordSession *)recordSession {
-    NSArray *sessions = [self savedRecordSessions];
+    NSArray *sessions = self.savedRecordSessions;
     
     for (NSDictionary *session in sessions) {
         if ([session[SCRecordSessionIdentifierKey] isEqualToString:recordSession.identifier]) {

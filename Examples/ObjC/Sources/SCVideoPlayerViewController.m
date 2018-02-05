@@ -20,14 +20,14 @@
 
 @implementation SCVideoPlayerViewController
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
+- (instancetype)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-	
+    
     if (self) {
         // Custom initialization
     }
-	
+    
     return self;
 }
 
@@ -81,9 +81,9 @@
     UIBarButtonItem *addButton = [[UIBarButtonItem alloc] initWithTitle:@"Add" style:UIBarButtonItemStyleBordered target:self action:@selector(startMediaBrowser)];
     self.navigationItem.rightBarButtonItems = @[saveButton, addButton];
     
-	_player = [SCPlayer player];
+    _player = [SCPlayer player];
     
-    if ([[NSProcessInfo processInfo] activeProcessorCount] > 1) {
+    if ([NSProcessInfo processInfo].activeProcessorCount > 1) {
         self.filterSwitcherView.contentMode = UIViewContentModeScaleAspectFill;
         
         SCFilter *emptyFilter = [SCFilter emptyFilter];
@@ -111,14 +111,14 @@
         [self.filterSwitcherView removeFromSuperview];
     }
     
-	_player.loopEnabled = YES;
+    _player.loopEnabled = YES;
 }
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
         
     [_player setItemByAsset:_recordSession.assetRepresentingSegments];
-	[_player play];
+    [_player play];
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
@@ -273,7 +273,7 @@
     
     UIImagePickerController *mediaUI = [[UIImagePickerController alloc] init];
     mediaUI.sourceType = UIImagePickerControllerSourceTypeSavedPhotosAlbum;
-    mediaUI.mediaTypes = [[NSArray alloc] initWithObjects: (NSString *) kUTTypeMovie, nil];
+    mediaUI.mediaTypes = @[(NSString *) kUTTypeMovie];
     
     mediaUI.allowsEditing = YES;
     mediaUI.delegate = self;

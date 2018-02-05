@@ -51,7 +51,7 @@
 }
 
 - (void)saveToCameraRoll {
-    UIImage *image = [self.filterSwitcherView renderedUIImage];
+    UIImage *image = (self.filterSwitcherView).renderedUIImage;
     
     [image saveToCameraRollWithCompletion:^(NSError * _Nullable error) {
         if (error == nil) {

@@ -45,7 +45,7 @@
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_7_0
 
 - (UIStatusBarStyle) preferredStatusBarStyle {
-	return UIStatusBarStyleLightContent;
+    return UIStatusBarStyleLightContent;
 }
 
 #endif
@@ -81,7 +81,7 @@
     
     [self.retakeButton addTarget:self action:@selector(handleRetakeButtonTapped:) forControlEvents:UIControlEventTouchUpInside];
     [self.stopButton addTarget:self action:@selector(handleStopButtonTapped:) forControlEvents:UIControlEventTouchUpInside];
-	[self.reverseCamera addTarget:self action:@selector(handleReverseCameraTapped:) forControlEvents:UIControlEventTouchUpInside];
+    [self.reverseCamera addTarget:self action:@selector(handleReverseCameraTapped:) forControlEvents:UIControlEventTouchUpInside];
     
     [self.recordView addGestureRecognizer:[[SCTouchDetector alloc] initWithTarget:self action:@selector(handleTouchDetected:)]];
     self.loadingView.hidden = YES;
@@ -119,7 +119,7 @@
     
     [self prepareSession];
     
-	self.navigationController.navigationBarHidden = YES;
+    self.navigationController.navigationBarHidden = YES;
 }
 
 - (void)viewDidLayoutSubviews {
@@ -131,7 +131,7 @@
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     
-    [_recorder startRunning];
+    _recorder.startRunning;
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
@@ -178,7 +178,7 @@
 }
 
 - (void) handleReverseCameraTapped:(id)sender {
-	[_recorder switchCaptureDevices];
+    [_recorder switchCaptureDevices];
 }
 
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info {
@@ -220,7 +220,7 @@
         }
     }
     
-	[self prepareSession];
+    [self prepareSession];
 }
 
 - (IBAction)switchCameraMode:(id)sender {
@@ -231,7 +231,7 @@
             self.retakeButton.alpha = 1.0;
             self.stopButton.alpha = 1.0;
         } completion:^(BOOL finished) {
-			_recorder.captureSessionPreset = kVideoPreset;
+            _recorder.captureSessionPreset = kVideoPreset;
             [self.switchCameraModeButton setTitle:@"Switch Photo" forState:UIControlStateNormal];
             [self.flashModeButton setTitle:@"Flash : Off" forState:UIControlStateNormal];
             _recorder.flashMode = SCFlashModeOff;
@@ -243,7 +243,7 @@
             self.stopButton.alpha = 0.0;
             self.capturePhotoButton.alpha = 1.0;
         } completion:^(BOOL finished) {
-			_recorder.captureSessionPreset = AVCaptureSessionPresetPhoto;
+            _recorder.captureSessionPreset = AVCaptureSessionPresetPhoto;
             [self.switchCameraModeButton setTitle:@"Switch Video" forState:UIControlStateNormal];
             [self.flashModeButton setTitle:@"Flash : Auto" forState:UIControlStateNormal];
             _recorder.flashMode = SCFlashModeAuto;
@@ -373,7 +373,7 @@
     
     if (_ghostModeButton.selected) {
         if (_recorder.session.segments.count > 0) {
-            SCRecordSessionSegment *segment = [_recorder.session.segments lastObject];
+            SCRecordSessionSegment *segment = (_recorder.session.segments).lastObject;
             image = segment.lastImage;
         }
     }
